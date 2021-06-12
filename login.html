@@ -21,15 +21,16 @@
             <form id="form" class="form-signin">
               <div class="form-floating mb-3">
                 <input type="email" class="form-control" id="username"
-                  placeholder="name@example.com" required autofocus>
+                  placeholder="name@example.com" required autofocus
+                  v-model="user.username">
                 <label for="username">Email address</label>
               </div>
               <div class="form-floating">
-                <input type="password" class="form-control" id="password"
-                  placeholder="Password" required>
+                <input type="password" class="form-control" id="password"placeholder="Password" required
+                v-model="user.passward">
                 <label for="password">Password</label>
               </div>
-              <button class="btn btn-lg btn-primary w-100 mt-3" type="submit">
+              <button class="btn btn-lg btn-primary w-100 mt-3" type="submit" @click="login()">
                 登入
               </button>
             </form>
@@ -50,6 +51,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"
       integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc"
       crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.2/vue.global.js"></script>
       <style>
           html,
 body {
@@ -74,44 +76,41 @@ body {
       <script>
           
 
-// const baseUrl = 'https://vue3-course-api.hexschool.io';
-const userName = document.querySelector('#username');
-const password = document.querySelector('#password');
-const loginBtn = document.querySelector('.btn-lg');
 
 
 
-const logInMethods = {
-  data:{
-    baseUrl: 'https://vue3-course-api.hexschool.io',
+const app = Vue.createApp({
+  data(){
+    return{
+      baseUrl: 'https://vue3-course-api.hexschool.io',
+      token:'',
+      logInCookie:document.cookie.replace(/(?:(?:^|.*;\s*)logToken\s*\=\s*([^;]*).*$)|^.*$/, "$1"),
+      expired:'',
+      user:{
+        username:'',
+        passward:''
+      }
+    }
   },
-  logInBtnEvent(){
-    loginBtn.addEventListener('click',(e)=>{
-      e.preventDefault();
-      let user = {
-        username: `${userName.value}`,
-        password: `${password.value}`
-        }
-      this.login(user);
-    })
-  },
-  login(user){
-    axios.post(`${this.data.baseUrl}/admin/signin`, user)
+  methods:{
+  login(){
+    axios.post(`${this.data.baseUrl}/admin/signin`, this.user)
     .then((res)=>{
       if(res.data.success){
-        const token = res.data.token;
-        const expired = res.data.expired;
+        this.token = res.data.token;
+        this.expired = res.data.expired;
         document.cookie = `logToken=${token}; expires=${new Date(expired)}; path=/`;
         window.location.href = "productList.html";
         return;
       }
       })
-  },
-  init(){
-    const token = document.cookie.replace(/(?:(?:^|.*;\s*)logToken\s*\=\s*([^;]*).*$)|^.*$/, "$1"); 
-    axios.defaults.headers.common['Authorization'] = token;
+  }
+},
+  mounted(){
+
+    axios.defaults.headers.common['Authorization'] = this.logInCookie;
     
-    axios.post(`${this.data.baseUrl}/api/user/check`)
+    axios.post(`${this.baseUrl}/api/user/check`)
     .then((res)=>{
       if(res.data.success){
         window.location.href = "productList.html";
@@ -125,10 +124,10 @@ const logInMethods = {
           console.log(error);
       })
     }
-}
+})
 
-logInMethods.init();
-logInMethods.logInBtnEvent();
+app.mount('#app');
+
       </script>
   </body>
 

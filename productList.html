@@ -87,7 +87,7 @@
                       <input type="text" class="form-control"
                              placeholder="請輸入圖片連結" v-model='tempProduct.product.imageUrl'>
                     </div>
-                    <img class="img-fluid" v-model:src="tempProduct.product.imageUrl" alt="">
+                    <img class="img-fluid" :src="tempProduct.product.imageUrl" alt="">
                   </div>
                   <div>其他圖片</div>
                   <template v-for="(url,index) in tempProduct.product.imagesUrl" :key="url">
@@ -96,7 +96,7 @@
                       <input type="text" class="form-control"
                              placeholder="請輸入圖片連結" v-model='tempProduct.product.imagesUrl[index]'>
                     </div>
-                    <img class="img-fluid" v-model:src="url" alt="">
+                    <img class="img-fluid" :src="url" alt="">
                   </div>
                 </div>
                 </template>
@@ -105,7 +105,7 @@
                       新增圖片
                     </button>
                   </div>
-                  <div v-else>
+                  <div>
                     <button class="btn btn-outline-danger btn-sm d-block w-100" @click="madelImagesBtn('del')">
                       刪除圖片
                     </button>
